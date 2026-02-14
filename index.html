@@ -12,26 +12,16 @@
        1. CSS VARIABLES (STRICT DESIGN SYSTEM)
        ========================================================================== */
     :root {
-      /* Core Palette */
       --bg: #050505; --surface: #111111; --surface-elevated: #1a1a1a;
       --border: #2a2a2a; --border-focus: #444444;
       --text: #f0f0f0; --text-muted: #888888;
-      
-      /* Semantic Colors */
       --accent: #007aff; --accent-hover: #005bb5;
       --success: #28cd41; --warning: #ffcc00; --error: #ff3b30;
-      
-      /* Node Categories */
       --type-person: #bf5af2; --type-event: #ff3b30; --type-general: #007aff;
-      
-      /* Layout & Typography */
       --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-      --radius: 6px; --radius-lg: 10px;
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --radius: 6px; --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
       --transition: 0.15s cubic-bezier(0.2, 0, 0, 1);
-      
-      /* Canvas State (Updated via JS) */
       --grid-size: 50px;
     }
 
@@ -47,7 +37,6 @@
        ========================================================================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
     body { background: var(--bg); color: var(--text); font-family: var(--font-ui); height: 100vh; display: flex; flex-direction: column; overflow: hidden; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
-    
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -57,7 +46,9 @@
        ========================================================================== */
     header { height: 48px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; flex-shrink: 0; z-index: 100; user-select: none; }
     .brand { font-size: 13px; font-weight: 700; letter-spacing: -0.2px; display: flex; align-items: center; gap: 8px; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); transition: background 0.3s; }
+    .status-dot.working { background: var(--warning); box-shadow: 0 0 8px var(--warning); animation: pulse 1s infinite alternate; }
+    @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
     
     .workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
     
@@ -71,16 +62,16 @@
     }
 
     /* Controls */
-    label { font-size: 10px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+    label { font-size: 10px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 0.5px; }
     input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: var(--radius); font-size: 12px; font-family: inherit; margin-bottom: 12px; transition: border var(--transition); }
     input:focus, select:focus, textarea:focus { border-color: var(--accent); }
     textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
     
     button { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: var(--radius); cursor: pointer; font-size: 11px; font-weight: 600; transition: all var(--transition); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-    button:hover { border-color: var(--border-focus); }
-    button.primary { background: var(--accent); color: #fff; border: none; width: 100%; padding: 10px; font-size: 12px; }
-    button.primary:hover { background: var(--accent-hover); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button:hover:not(:disabled) { border-color: var(--border-focus); }
+    button.primary { background: var(--accent); color: #fff; border: none; width: 100%; padding: 10px; font-size: 12px; margin-top: 8px; }
+    button.primary:hover:not(:disabled) { background: var(--accent-hover); }
+    button:disabled { opacity: 0.5; cursor: wait; }
 
     /* Toggles & segmented controls */
     .segmented-control { display: flex; background: var(--bg); padding: 2px; border-radius: var(--radius); border: 1px solid var(--border); }
@@ -93,13 +84,15 @@
     .switch.on::after { transform: translateX(14px); }
 
     /* Flow Indicator */
-    .flow-path { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-    .flow-step { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); transition: color var(--transition); }
+    .flow-path { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; background: var(--bg); padding: 12px; border-radius: var(--radius); border: 1px solid var(--border); }
+    .flow-step { display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--text-muted); transition: color var(--transition); font-family: var(--font-mono); }
     .flow-step::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
     .flow-step.active { color: var(--accent); font-weight: 600; }
     .flow-step.active::before { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
     .flow-step.done { color: var(--success); }
     .flow-step.done::before { background: var(--success); }
+    .flow-step.fail { color: var(--warning); }
+    .flow-step.fail::before { background: var(--warning); }
 
     /* ==========================================================================
        4. VIEWS (TIMELINE, TABLE, HISTOGRAM)
@@ -120,20 +113,16 @@
     .node { position: absolute; background: var(--surface); border: 1px solid var(--border); padding: 10px 14px; border-radius: var(--radius); min-width: 200px; max-width: 300px; box-shadow: var(--shadow); cursor: pointer; pointer-events: auto; user-select: none; transition: box-shadow var(--transition), border-color var(--transition); }
     .node:hover, .node.dragging { border-color: var(--text-muted); z-index: 100; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
     
-    /* Center alignments for layout */
     .layout-x .node { top: 0; transform: translate(-50%, -50%); }
     .layout-y .node { left: 0; transform: translate(-50%, -50%); }
 
-    /* Node Types & Fuzzy Edges */
     .type-Person { border-top: 2px solid var(--type-person); }
     .type-Event { border-top: 2px solid var(--type-event); }
     .type-General { border-top: 2px solid var(--type-general); }
     
-    /* Fuzzy logic representation */
     .fade-start { mask-image: linear-gradient(to right, transparent, black 15%); -webkit-mask-image: linear-gradient(to right, transparent, black 15%); }
     .fade-end { mask-image: linear-gradient(to left, transparent, black 15%); -webkit-mask-image: linear-gradient(to left, transparent, black 15%); }
     
-    /* Period representation (Stretch) */
     .is-period { transform: translate(0, -50%); }
     .layout-y .is-period { transform: translate(-50%, 0); }
 
@@ -141,7 +130,6 @@
     .node-date { font-family: var(--font-mono); font-size: 9px; color: var(--accent); font-weight: 600; letter-spacing: 0.5px; }
     .node-title { font-size: 13px; font-weight: 600; line-height: 1.2; color: var(--text); }
     
-    /* Hover/Click Detail Square */
     .node-detail { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
     .node.expanded .node-detail { display: block; }
     .node-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; transition: all var(--transition); }
@@ -151,14 +139,13 @@
     .node-src a { color: var(--text-muted); text-decoration: none; }
     .node-src a:hover { color: var(--accent); }
 
-    /* Dragging Tooltip */
     .drag-tooltip { position: absolute; background: var(--accent); color: #fff; font-family: var(--font-mono); font-size: 10px; padding: 4px 8px; border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity var(--transition); z-index: 200; transform: translate(-50%, -200%); }
     .node.dragging .drag-tooltip { opacity: 1; }
 
-    /* Truly Borderless Table */
+    /* Borderless Table */
     .table-view { padding: 0; overflow-y: auto; }
     table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
-    th { color: var(--text-muted); padding: 12px 24px; font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: var(--surface); z-index: 2; }
+    th { color: var(--text-muted); padding: 12px 24px; font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: var(--surface); z-index: 2; border-bottom: 1px solid var(--border); }
     td { padding: 12px 24px; color: var(--text); border: none; }
     tr:nth-child(even) { background: rgba(255,255,255,0.01); }
     tr:hover { background: var(--surface-elevated); }
@@ -217,9 +204,17 @@
       <label>Target Directive</label>
       <textarea id="promptInput" placeholder="Specify extraction target. e.g. 'Timeline of the Apollo space program, including key personnel and incidents.'"></textarea>
       
-      <label>Groq Authentication (GSK)</label>
-      <input type="password" id="apiKeyInput" placeholder="gsk_..." autocomplete="off">
-      
+      <div style="display:flex; gap:8px;">
+        <div style="flex:1;">
+          <label>Groq API (GSK)</label>
+          <input type="password" id="apiKeyInput" placeholder="gsk_..." autocomplete="off">
+        </div>
+        <div style="flex:1;">
+          <label>Proxy Relay Key</label>
+          <input type="password" id="proxyKeyInput" placeholder="chikibriki" autocomplete="off" value="chikibriki">
+        </div>
+      </div>
+
       <div style="display:flex; gap:12px;">
         <div style="flex:2;">
           <label>Inference Model</label>
@@ -230,7 +225,7 @@
           </select>
         </div>
         <div style="flex:1;">
-          <label>Proxy</label>
+          <label>Routing</label>
           <div class="switch on" id="proxyToggle"></div>
         </div>
       </div>
@@ -294,16 +289,21 @@
 
 <script>
 /**
- * CHRONOS ENTERPRISE ENGINE (V3.0)
+ * CHRONOS ENTERPRISE ENGINE (V4.0)
  * Authored by: Silas.
- * Architecture: Zero-dependency, Strict State Machine, Hardware Accelerated Canvas.
+ * Additions: Military-grade fault-tolerant network routing matrix, WAF bypass, graceful degradation.
  */
 
 "use strict";
 
 // --- 1. STRICT SCHEMAS & CONSTANTS ---
 const API_GROQ = "https://api.groq.com/openai/v1/chat/completions";
-const PROXY_URL = "https://corsproxy.io/?";
+
+const PROXIES = {
+  primary: "https://onbkfqayveownervyktu.supabase.co/functions/v1/cors-proxy?url=",
+  fallback_1: "https://corsproxy.io/?",
+  fallback_2: "https://api.allorigins.win/raw?url="
+};
 
 const JSON_SCHEMA = {
   "type": "array",
@@ -324,90 +324,108 @@ const JSON_SCHEMA = {
   }
 };
 
-// --- 2. STATE MACHINE ---
+// --- 2. FAULT-TOLERANT NETWORK ROUTER ---
+const Network = {
+  async fetchSecure(url, useProxy, proxyKey) {
+    if (!useProxy) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Direct fetch failed: ${res.status}`);
+      return await res.text();
+    }
+
+    // Attempt 1: Supabase Relay with Auth
+    try {
+      chronos.log(`[NET] Routing via Primary Relay (Supabase)...`, "INFO");
+      const res = await fetch(PROXIES.primary + encodeURIComponent(url), {
+        headers: { "x-proxy-key": proxyKey || "chikibriki" }
+      });
+      if (res.ok) return await res.text();
+      chronos.log(`[NET] Primary Relay rejected request (${res.status}). Switching nodes.`, "WARN");
+    } catch(e) {
+      chronos.log(`[NET] Primary Relay unreachable.`, "WARN");
+    }
+
+    // Attempt 2: Public Fallback 1 (CorsProxy)
+    try {
+      chronos.log(`[NET] Routing via Secondary Relay (CorsProxy)...`, "INFO");
+      const res = await fetch(PROXIES.fallback_1 + encodeURIComponent(url));
+      if (res.ok) return await res.text();
+      chronos.log(`[NET] Secondary Relay rejected request (${res.status}).`, "WARN");
+    } catch(e) {}
+
+    // Attempt 3: Public Fallback 2 (AllOrigins)
+    try {
+      chronos.log(`[NET] Routing via Tertiary Relay (AllOrigins)...`, "INFO");
+      const res = await fetch(PROXIES.fallback_2 + encodeURIComponent(url));
+      if (res.ok) return await res.text();
+    } catch(e) {}
+
+    throw new Error("All proxy layers compromised/blocked by WAF.");
+  }
+};
+
+// --- 3. STATE MACHINE ---
 const State = {
   events: [],
-  layout: 'x',       // 'x' or 'y'
-  pixelsPerDay: 2,   // Base temporal resolution
+  layout: 'x',
+  pixelsPerDay: 2,
   baseTime: Date.now(),
   
-  // Canvas Transform Matrix
+  // Canvas Transform
   transform: { x: 0, y: 0, scale: 1 },
   isDraggingCanvas: false,
   dragStart: { x: 0, y: 0 },
   
   // Node Mutability
   draggingNode: null,
-  
-  // Throttle/Debounce
   renderPending: false
 };
 
-// --- 3. UTILITIES (PURE FUNCTIONS) ---
+// --- 4. UTILITIES ---
 const Utils = {
   escape(str) {
     if (!str) return '';
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   },
-  
-  generateId() {
-    return 'id_' + crypto.randomUUID().split('-')[0];
-  },
-  
+  generateId() { return 'id_' + crypto.randomUUID().split('-')[0]; },
   parseDate(dateStr) {
     const d = new Date(dateStr);
     return isNaN(d.getTime()) ? null : d.getTime();
   },
-  
-  formatDate(ms) {
-    return new Date(ms).toISOString().split('T')[0];
-  },
-  
-  timeToPixels(ms) {
-    return ((ms - State.baseTime) / 86400000) * State.pixelsPerDay;
-  },
-  
-  pixelsToTime(px) {
-    return State.baseTime + ((px / State.pixelsPerDay) * 86400000);
-  },
-
-  hashEvent(ev) {
-    // Unique fingerprint for deduplication
-    return `${ev.title.toLowerCase().trim()}_${ev.start}`;
-  }
+  formatDate(ms) { return new Date(ms).toISOString().split('T')[0]; },
+  timeToPixels(ms) { return ((ms - State.baseTime) / 86400000) * State.pixelsPerDay; },
+  pixelsToTime(px) { return State.baseTime + ((px / State.pixelsPerDay) * 86400000); },
+  hashEvent(ev) { return `${ev.title.toLowerCase().trim()}_${ev.start}`; }
 };
 
-// --- 4. CORE CONTROLLER ---
+// --- 5. CORE CONTROLLER ---
 const chronos = {
   
   init() {
     this.bindDOM();
     this.restoreSettings();
-    this.log("Chronos Engine Initialized. DOM bindings secure.", "SUCCESS");
+    this.log("Chronos V4 Engine Initialized. Multi-tier routing active.", "SUCCESS");
     if(window.innerWidth < 768) document.getElementById('mobileMenu').style.display = 'block';
     
-    // Initial centering
     State.transform.x = window.innerWidth / 2;
     State.transform.y = window.innerHeight / 2;
     this.requestRender();
   },
 
   bindDOM() {
-    // Toggles
     document.getElementById('themeToggle').addEventListener('click', e => {
       e.target.classList.toggle('on');
       document.documentElement.setAttribute('data-theme', e.target.classList.contains('on') ? 'dark' : 'light');
     });
     document.getElementById('proxyToggle').addEventListener('click', e => e.target.classList.toggle('on'));
     
-    // Save Key
     document.getElementById('apiKeyInput').addEventListener('change', e => localStorage.setItem('chronos_key', e.target.value));
+    document.getElementById('proxyKeyInput').addEventListener('change', e => localStorage.setItem('chronos_proxy_key', e.target.value));
 
-    // Viewport Interactions (Pan/Zoom)
     const vp = document.getElementById('view-timeline');
     
     vp.addEventListener('mousedown', e => {
-      if (e.target.closest('.node')) return; // Pass to node drag
+      if (e.target.closest('.node')) return;
       State.isDraggingCanvas = true;
       State.dragStart.x = e.clientX - State.transform.x;
       State.dragStart.y = e.clientY - State.transform.y;
@@ -428,16 +446,13 @@ const chronos = {
       if (State.draggingNode) this.endNodeDrag();
     });
 
-    // Zoom Math (Pinch & Wheel)
     vp.addEventListener('wheel', e => {
       e.preventDefault();
       if (e.ctrlKey || e.metaKey) {
-        // Zoom relative to pointer
         const zoomIntensity = 0.005;
         const delta = -e.deltaY * zoomIntensity;
         const newScale = Math.min(Math.max(0.1, State.transform.scale + delta), 10);
         
-        // Offset adjustment for zoom-to-cursor
         const rect = vp.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
@@ -446,18 +461,17 @@ const chronos = {
         State.transform.y -= (mouseY - State.transform.y) * (newScale / State.transform.scale - 1);
         State.transform.scale = newScale;
       } else {
-        // Pan
         State.transform.x -= e.deltaX;
         State.transform.y -= e.deltaY;
       }
       this.requestRender();
     }, { passive: false });
-
-    // Touch implementation for strict mobile parity omitted for brevity, logic identical to pointer math.
   },
 
   restoreSettings() {
     document.getElementById('apiKeyInput').value = localStorage.getItem('chronos_key') || '';
+    const pKey = localStorage.getItem('chronos_proxy_key');
+    if(pKey) document.getElementById('proxyKeyInput').value = pKey;
   },
 
   log(msg, level="INFO") {
@@ -490,14 +504,11 @@ const chronos = {
     
     State.layout = axis;
     document.getElementById('view-timeline').className = `view active viewport layout-${axis}`;
-    
-    // Reset transform
     State.transform = { x: window.innerWidth/2, y: window.innerHeight/2, scale: 1 };
     this.requestRender();
     this.renderTimeline();
   },
 
-  // --- 5. RENDER ENGINE (HARDWARE ACCELERATED) ---
   requestRender() {
     if (State.renderPending) return;
     State.renderPending = true;
@@ -505,20 +516,16 @@ const chronos = {
   },
 
   applyTransforms() {
-    // 1. Transform Canvas Layer
     const layer = document.getElementById('canvasLayer');
     layer.style.transform = `translate(${State.transform.x}px, ${State.transform.y}px) scale(${State.transform.scale})`;
     
-    // 2. Transform CSS Background Grid to match
     const vp = document.getElementById('view-timeline');
     vp.style.setProperty('--pan-x', State.transform.x);
     vp.style.setProperty('--pan-y', State.transform.y);
     vp.style.setProperty('--grid-size', `${50 * State.transform.scale}px`);
-    
     State.renderPending = false;
   },
 
-  // --- 6. NODE DRAG MUTATION LOGIC ---
   startNodeDrag(e, eventId, element) {
     e.stopPropagation();
     const ev = State.events.find(x => x.id === eventId);
@@ -532,36 +539,30 @@ const chronos = {
       startMouse: State.layout === 'x' ? e.clientX : e.clientY,
       startPixel: Utils.timeToPixels(Utils.parseDate(ev.start))
     };
-    
     element.classList.add('dragging');
   },
 
   handleNodeDrag(e) {
     const d = State.draggingNode;
     const currentMouse = State.layout === 'x' ? e.clientX : e.clientY;
-    
-    // Calculate delta taking scale into account
     const deltaPx = (currentMouse - d.startMouse) / State.transform.scale;
     const newPx = d.startPixel + deltaPx;
     
-    // Visual update
     if (State.layout === 'x') d.el.style.left = `${newPx}px`;
     else d.el.style.top = `${newPx}px`;
     
-    // Temporal update computation
     const newTime = Utils.pixelsToTime(newPx);
     const newDateStr = Utils.formatDate(newTime);
     
     d.tooltip.innerText = newDateStr;
     d.dateDisplay.innerText = newDateStr + ' (Mutating)';
-    d.newDateStr = newDateStr; // Cache for commit
+    d.newDateStr = newDateStr;
   },
 
   endNodeDrag() {
     const d = State.draggingNode;
     if (d.newDateStr) {
       d.ev.start = d.newDateStr;
-      // If it was a period, shift the end date accordingly to maintain duration
       if (d.ev.end) {
         const oldStart = Utils.parseDate(d.ev.start);
         const oldEnd = Utils.parseDate(d.ev.end);
@@ -572,8 +573,6 @@ const chronos = {
         }
       }
       this.log(`Node [${d.ev.id}] temporally mutated to ${d.ev.start}`, "WARN");
-      
-      // Re-sort data array
       State.events.sort((a,b) => Utils.parseDate(a.start) - Utils.parseDate(b.start));
     }
     
@@ -582,48 +581,42 @@ const chronos = {
     State.draggingNode = null;
   },
 
-  // --- 7. OSINT PIPELINE (SEARCH -> CRAWL -> PARSE) ---
   setFlow(step, status) {
     const el = document.getElementById(`step-${step}`);
-    if (status === 'active') {
-      el.classList.add('active'); el.classList.remove('done');
-    } else if (status === 'done') {
-      el.classList.remove('active'); el.classList.add('done');
-    } else {
-      el.classList.remove('active', 'done');
-    }
+    el.classList.remove('active', 'done', 'fail');
+    if (status) el.classList.add(status);
   },
 
   async executePipeline() {
     const prompt = document.getElementById('promptInput').value.trim();
     const key = document.getElementById('apiKeyInput').value;
+    const proxyKey = document.getElementById('proxyKeyInput').value;
     const useProxy = document.getElementById('proxyToggle').classList.contains('on');
     const btn = document.getElementById('executeBtn');
+    const dot = document.getElementById('statusDot');
 
     if (!prompt || !key) return alert("Target Directive and Groq Key required.");
 
     btn.disabled = true;
+    dot.classList.add('working');
     document.getElementById('logsDrawer').classList.remove('collapsed');
     ['search', 'crawl', 'parse', 'map'].forEach(s => this.setFlow(s, ''));
     
     let compiledContext = "";
+    let targetLinks = [];
 
+    // STEP 1: SEARCH (With Graceful Degradation)
     try {
-      // STEP 1: SEARCH
       this.setFlow('search', 'active');
-      this.log(`Executing DuckDuckGo search: "${prompt}"`, "INFO");
+      this.log(`Executing search: "${prompt}"`, "INFO");
       
       const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(prompt)}`;
-      const reqUrl = useProxy ? PROXY_URL + encodeURIComponent(searchUrl) : searchUrl;
-      
-      const searchRes = await fetch(reqUrl);
-      if(!searchRes.ok) throw new Error(`Search network error: ${searchRes.status}`);
-      const searchHtml = await searchRes.text();
+      const searchHtml = await Network.fetchSecure(searchUrl, useProxy, proxyKey);
       
       const parser = new DOMParser();
       const doc = parser.parseFromString(searchHtml, 'text/html');
       
-      const targetLinks = Array.from(doc.querySelectorAll('.result__a')).slice(0, 3).map(a => {
+      targetLinks = Array.from(doc.querySelectorAll('.result__a')).slice(0, 3).map(a => {
         let href = a.getAttribute('href');
         if (href.includes('uddg=')) {
           try { href = decodeURIComponent(new URL(href, 'https://duckduckgo.com').searchParams.get('uddg')); } catch(e){}
@@ -631,16 +624,25 @@ const chronos = {
         return href;
       });
       
-      this.setFlow('search', 'done');
-      this.log(`Search complete. Acquired ${targetLinks.length} primary targets.`, "SUCCESS");
+      if(targetLinks.length > 0) {
+        this.setFlow('search', 'done');
+        this.log(`Search complete. Acquired ${targetLinks.length} primary targets.`, "SUCCESS");
+      } else {
+        throw new Error("HTML structure change or bot-check prevented link extraction.");
+      }
+    } catch(err) {
+      this.setFlow('search', 'fail');
+      this.log(`Search layer failed (${err.message}). Bypassing to LLM internal weights.`, "WARN");
+    }
 
-      // STEP 2: CRAWL
+    // STEP 2: CRAWL
+    if (targetLinks.length > 0) {
       this.setFlow('crawl', 'active');
+      const parser = new DOMParser();
       for (let link of targetLinks) {
         try {
           this.log(`Crawling payload: ${link}`, "INFO");
-          const crawlRes = await fetch(useProxy ? PROXY_URL + encodeURIComponent(link) : link);
-          const crawlHtml = await crawlRes.text();
+          const crawlHtml = await Network.fetchSecure(link, useProxy, proxyKey);
           const cleanDoc = parser.parseFromString(crawlHtml, 'text/html');
           
           const reader = new Readability(cleanDoc);
@@ -651,17 +653,21 @@ const chronos = {
             this.log(`Extraction successful from ${link}`, "SUCCESS");
           }
         } catch(err) {
-          this.log(`Extraction failed on ${link} (Possible anti-bot threshold).`, "WARN");
+          this.log(`Extraction failed on ${link}. Skipping node.`, "WARN");
         }
       }
-      this.setFlow('crawl', 'done');
+      this.setFlow('crawl', compiledContext ? 'done' : 'fail');
+    } else {
+      this.setFlow('crawl', 'fail'); // Skip crawl if search failed
+    }
 
-      // STEP 3: SEMANTIC PARSE
+    // STEP 3: SEMANTIC PARSE
+    try {
       this.setFlow('parse', 'active');
-      this.log(`Transmitting compiled context to Inference Engine...`, "INFO");
+      this.log(`Transmitting matrix to Inference Engine...`, "INFO");
       
       const model = document.getElementById('modelSelect').value;
-      const sysPrompt = `You are a precision chronological parser. Extract timeline events from the user prompt and provided context. Deduplicate ongoing events. Output MUST strictly match this JSON schema: ${JSON.stringify(JSON_SCHEMA)}`;
+      const sysPrompt = `You are a precision chronological parser. Extract timeline events from the user prompt and provided context. Deduplicate ongoing events. Output MUST strictly match this JSON schema: ${JSON.stringify(JSON_SCHEMA)}. If context is missing, use your highly detailed internal knowledge to fulfill the user's directive.`;
       const userPrompt = `CONTEXT:\n${compiledContext || 'No live context available. Utilize deep internal weights.'}\n\nDIRECTIVE: ${prompt}`;
 
       const groqRes = await fetch(API_GROQ, {
@@ -683,7 +689,6 @@ const chronos = {
       const groqData = await groqRes.json();
       const rawJson = JSON.parse(groqData.choices[0].message.content);
       
-      // Robust array extraction
       let newEvents = Array.isArray(rawJson) ? rawJson : (rawJson.items || rawJson.events || Object.values(rawJson).find(v => Array.isArray(v)) || []);
       
       this.setFlow('parse', 'done');
@@ -697,9 +702,11 @@ const chronos = {
       this.log("Pipeline execution finished seamlessly.", "SUCCESS");
 
     } catch (err) {
+      this.setFlow('parse', 'fail');
       this.log(`PIPELINE FAILURE: ${err.message}`, "ERROR");
     } finally {
       btn.disabled = false;
+      dot.classList.remove('working');
     }
   },
 
@@ -708,7 +715,7 @@ const chronos = {
     
     newEvents.forEach(ev => {
       if (!ev.id) ev.id = Utils.generateId();
-      if (!ev.start) return; // Discard invalid
+      if (!ev.start) return; 
       
       const hash = Utils.hashEvent(ev);
       const existingIdx = State.events.findIndex(e => Utils.hashEvent(e) === hash);
@@ -722,24 +729,21 @@ const chronos = {
       }
     });
     
-    // Sort strictly chronologically
     State.events.sort((a,b) => Utils.parseDate(a.start) - Utils.parseDate(b.start));
     
-    // Recalculate base time for spatial coordinate system
     if (State.events.length > 0) {
       State.baseTime = Utils.parseDate(State.events[0].start);
     }
     
     this.log(`Merge operation: ${added} added, ${updated} updated. Total spatial matrix nodes: ${State.events.length}`, "INFO");
-    
     this.renderTimeline();
+    if(document.getElementById('view-table').classList.contains('active')) this.renderTable();
+    if(document.getElementById('view-histogram').classList.contains('active')) this.renderHistogram();
   },
 
   // --- 8. DOM RENDERERS ---
   renderTimeline() {
     const layer = document.getElementById('canvasLayer');
-    
-    // Preserve axis line, remove old nodes
     Array.from(layer.children).forEach(c => { if(c.id !== 'axisLine') layer.removeChild(c); });
     
     const fragment = document.createDocumentFragment();
@@ -749,23 +753,19 @@ const chronos = {
       if(!msStart) return;
       
       const posPx = Utils.timeToPixels(msStart);
-      
       const el = document.createElement('div');
       
-      // Styling logic
       let classes = ['node', `type-${ev.type || 'General'}`];
       if (ev.fadeStart) classes.push('fade-start');
       if (ev.fadeEnd) classes.push('fade-end');
       if (ev.end) classes.push('is-period');
       el.className = classes.join(' ');
       
-      // Spatial placement (staggered to prevent complete overlap)
       if (State.layout === 'x') {
         el.style.left = `${posPx}px`;
         const stagger = (idx % 3) * 120;
         el.style.top = `${stagger - 120}px`; 
         
-        // If it's a period, calculate width
         if (ev.end) {
            const msEnd = Utils.parseDate(ev.end);
            if(msEnd) {
@@ -797,7 +797,6 @@ const chronos = {
           <div class="node-date">${dateStr}</div>
         </div>
         <div class="node-title">${Utils.escape(ev.title)}</div>
-        
         <div class="node-detail">
           <div class="node-desc" id="desc_${ev.id}">${Utils.escape(ev.description)}</div>
           <div class="node-more" onclick="chronos.toggleExpand(event, this, 'desc_${ev.id}')">READ FULL</div>
@@ -805,10 +804,8 @@ const chronos = {
         </div>
       `;
 
-      // Event Listeners for Interaction Matrix
       el.addEventListener('mousedown', e => this.startNodeDrag(e, ev.id, el));
       el.addEventListener('click', e => {
-        // Only expand if we didn't just drag
         if (!State.draggingNode) el.classList.toggle('expanded');
       });
 
@@ -819,7 +816,7 @@ const chronos = {
   },
 
   toggleExpand(e, btn, descId) {
-    e.stopPropagation(); // prevent node toggle
+    e.stopPropagation();
     const desc = document.getElementById(descId);
     desc.classList.toggle('full');
     btn.innerText = desc.classList.contains('full') ? 'COLLAPSE' : 'READ FULL';
@@ -879,7 +876,6 @@ const chronos = {
   }
 };
 
-// Initialize Engine on load
 window.addEventListener('DOMContentLoaded', () => chronos.init());
 </script>
 </body>
