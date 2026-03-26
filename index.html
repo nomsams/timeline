@@ -12,7 +12,7 @@
        1. CSS VARIABLES (STRICT DESIGN SYSTEM)
        ========================================================================== */
     :root {
-      --bg: #050505; --surface: #111111; --surface-elevated: #1a1a1a; --surface-glass: rgba(17, 17, 17, 0.7);
+      --bg: #050505; --surface: #111111; --surface-elevated: #1a1a1a; --surface-glass: rgba(17, 17, 17, 0.85);
       --border: #2a2a2a; --border-focus: #444444;
       --text: #f0f0f0; --text-muted: #888888;
       --accent: #007aff; --accent-hover: #005bb5; --accent-glow: rgba(0, 122, 255, 0.3);
@@ -25,7 +25,7 @@
     }
 
     [data-theme="light"] {
-      --bg: #f5f5f7; --surface: #ffffff; --surface-elevated: #e8e8ed; --surface-glass: rgba(255, 255, 255, 0.7);
+      --bg: #f5f5f7; --surface: #ffffff; --surface-elevated: #e8e8ed; --surface-glass: rgba(255, 255, 255, 0.9);
       --border: #d2d2d7; --border-focus: #999999;
       --text: #1d1d1f; --text-muted: #86868b;
       --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -96,21 +96,17 @@
     .viewport { flex: 1; overflow: hidden; position: relative; cursor: grab; background-color: var(--bg); background-image: radial-gradient(var(--border) 1px, transparent 1px); background-size: calc(50px * var(--scale)) calc(50px * var(--scale)); background-position: calc(var(--pan-x) * 1px) calc(var(--pan-y) * 1px); will-change: background-position; }
     .viewport:active { cursor: grabbing; }
     
-    .canvas-layer { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; pointer-events: none; width: 0; height: 0; }
+    .canvas-layer { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; width: 100%; height: 100%; pointer-events: none; }
     
-    /* SVG Overlay for Lines & Axis */
-    #timelineSvg { position: absolute; top: 0; left: 0; overflow: visible; pointer-events: none; z-index: 1; }
-    .svg-axis { stroke: var(--border-focus); stroke-width: 2; stroke-dasharray: 4 4; }
-    .svg-tick { stroke: var(--border-focus); stroke-width: 2; }
-    .svg-stem { stroke: var(--border-focus); stroke-width: 1.5; opacity: 0.6; transition: stroke 0.2s; }
-    .svg-duration { fill: var(--accent); opacity: 0.2; rx: 4; ry: 4; }
-    .svg-duration-line { stroke: var(--accent); stroke-width: 2; }
-    .svg-text { fill: var(--text-muted); font-family: var(--font-mono); font-size: 10px; font-weight: 600; user-select: none; }
+    /* DOM-Based Spatial Elements */
+    .dom-axis { position: absolute; background: var(--border-focus); pointer-events: none; z-index: 1; }
+    .dom-stem { position: absolute; background: var(--border-focus); pointer-events: none; z-index: 1; opacity: 0.6; }
+    .dom-tick { position: absolute; background: var(--border-focus); pointer-events: none; z-index: 1; }
+    .dom-duration { position: absolute; background: var(--accent); opacity: 0.2; border-radius: 4px; pointer-events: none; z-index: 1; }
+    .dom-date-label { position: absolute; color: var(--text-muted); font-family: var(--font-mono); font-size: 10px; font-weight: 600; pointer-events: none; z-index: 1; white-space: nowrap; transform: translate(-50%, -50%); }
 
     /* Timeline Nodes */
-    #nodesContainer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
-    
-    .node { position: absolute; background: var(--surface-glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); padding: 14px; border-radius: var(--radius); width: 280px; box-shadow: var(--shadow); cursor: pointer; pointer-events: auto; user-select: none; transition: box-shadow var(--transition), border-color var(--transition), transform 0.1s; display: flex; flex-direction: column; gap: 8px; }
+    .node { position: absolute; background: var(--surface-glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); padding: 14px; border-radius: var(--radius); width: 280px; box-shadow: var(--shadow); cursor: pointer; pointer-events: auto; user-select: none; transition: box-shadow var(--transition), border-color var(--transition), transform 0.1s; display: flex; flex-direction: column; gap: 8px; z-index: 2; }
     .node:hover, .node.dragging { border-color: var(--text-muted); z-index: 100; box-shadow: 0 12px 40px rgba(0,0,0,0.6); }
     .node.dragging { transform: scale(1.02); cursor: grabbing; }
 
@@ -139,6 +135,10 @@
     .drag-tooltip { position: absolute; background: var(--text); color: var(--bg); font-family: var(--font-mono); font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity var(--transition); z-index: 200; transform: translate(-50%, -150%); left: 50%; top: 0; white-space: nowrap; }
     .node.dragging .drag-tooltip { opacity: 1; }
 
+    /* Floating Viewport Controls */
+    .viewport-controls { position: absolute; bottom: 20px; right: 20px; display: flex; gap: 8px; z-index: 10; background: var(--surface-glass); padding: 8px; border-radius: var(--radius); border: 1px solid var(--border); backdrop-filter: blur(10px); }
+    .viewport-controls button { padding: 8px 12px; font-size: 14px; margin: 0; }
+
     /* Borderless Table */
     .table-view { padding: 0; overflow-y: auto; background: var(--bg); }
     table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
@@ -148,7 +148,7 @@
     tr:hover { background: var(--surface-elevated); }
 
     /* Histogram Plotting */
-    .hist-view { padding: 40px; display: flex; align-items: flex-end; justify-content: flex-start; gap: 12px; overflow-x: auto; overflow-y: hidden; background: var(--bg); height: 100%; min-height: 0; }
+    .hist-view { padding: 40px; display: flex; align-items: flex-end; justify-content: flex-start; gap: 12px; overflow-x: auto; overflow-y: hidden; background: var(--bg); }
     .hist-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-width: 60px; height: 100%; position: relative; }
     .hist-bar { width: 100%; background: var(--border-focus); border-radius: 6px 6px 0 0; transition: height 0.5s cubic-bezier(0.2, 0, 0, 1), background 0.2s; min-height: 4px; position: relative; cursor: pointer; }
     .hist-col:hover .hist-bar { background: var(--accent); box-shadow: 0 0 16px var(--accent-glow); }
@@ -270,8 +270,12 @@
 
   <main id="view-timeline" class="view active viewport layout-x">
     <div class="canvas-layer" id="canvasLayer">
-      <svg id="timelineSvg"></svg>
-      <div id="nodesContainer"></div>
+      <!-- DOM Elements injected here -->
+    </div>
+    <div class="viewport-controls">
+      <button onclick="chronos.zoom(0.2)" title="Zoom In">+</button>
+      <button onclick="chronos.zoom(-0.2)" title="Zoom Out">-</button>
+      <button onclick="chronos.fitToScreen()" title="Fit to Screen">⛶</button>
     </div>
   </main>
 
@@ -282,7 +286,7 @@
     </table>
   </main>
 
-  <main id="view-histogram" class="view hist-view" id="histContainer"></main>
+  <main id="view-histogram" class="view hist-view"></main>
 </div>
 
 <div class="logs-drawer collapsed" id="logsDrawer">
@@ -298,9 +302,9 @@
 
 <script>
 /**
- * CHRONOS ENTERPRISE ENGINE (V6.0)
+ * CHRONOS ENTERPRISE ENGINE (V8.0)
  * Authored by: Silas.
- * Upgrades: Smart collision-free lane rendering, SVG spatial overlay, Auto-fit bounds, Glassmorphic UI.
+ * Upgrades: Bulletproof JSON parsing, Strict Type Checking, Ad-Tracker filtering in Search.
  */
 
 "use strict";
@@ -312,23 +316,30 @@ const PROXIES = {
   fallback_2: "https://api.allorigins.win/raw?url="
 };
 
+// V8 Upgrade: Wrapped in an "events" object to prevent LLM hallucinating string arrays
 const JSON_SCHEMA = {
-  "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "id": { "type": "string" },
-      "title": { "type": "string" },
-      "start": { "type": "string", "description": "YYYY-MM-DD" },
-      "end": { "type": "string", "description": "YYYY-MM-DD or null" },
-      "type": { "type": "string", "enum": ["Person", "Event", "General"] },
-      "description": { "type": "string", "description": "Concise summary" },
-      "sources": { "type": "array", "items": { "type": "string" } },
-      "fadeStart": { "type": "boolean" },
-      "fadeEnd": { "type": "boolean" }
-    },
-    "required":["id", "title", "start", "type", "description"]
-  }
+  "type": "object",
+  "properties": {
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "start": { "type": "string", "description": "YYYY-MM-DD" },
+          "end": { "type": "string", "description": "YYYY-MM-DD or null" },
+          "type": { "type": "string", "enum":["Person", "Event", "General"] },
+          "description": { "type": "string", "description": "Concise summary" },
+          "sources": { "type": "array", "items": { "type": "string" } },
+          "fadeStart": { "type": "boolean" },
+          "fadeEnd": { "type": "boolean" }
+        },
+        "required":["title", "start", "type", "description"]
+      }
+    }
+  },
+  "required": ["events"]
 };
 
 const Network = {
@@ -391,14 +402,14 @@ const Utils = {
   formatDate(ms) { return new Date(ms).toISOString().split('T')[0]; },
   timeToPixels(ms) { return ((ms - State.baseTime) / 86400000) * State.pixelsPerDay; },
   pixelsToTime(px) { return State.baseTime + ((px / State.pixelsPerDay) * 86400000); },
-  hashEvent(ev) { return `${ev.title.toLowerCase().trim()}_${ev.start}`; }
+  hashEvent(ev) { return `${(ev.title || '').toLowerCase().trim()}_${ev.start}`; }
 };
 
 const chronos = {
   init() {
     this.bindDOM();
     this.restoreSettings();
-    this.log("Chronos V6 Engine Initialized. Smart collision routing active.", "SUCCESS");
+    this.log("Chronos V8 Engine Initialized. Strict parsing & Ad-blocker active.", "SUCCESS");
     if(window.innerWidth < 768) document.getElementById('mobileMenu').style.display = 'block';
     
     // Initial centering
@@ -420,7 +431,7 @@ const chronos = {
     const vp = document.getElementById('view-timeline');
     
     vp.addEventListener('mousedown', e => {
-      if (e.target.closest('.node')) return;
+      if (e.target.closest('.node') || e.target.closest('.viewport-controls')) return;
       State.isDraggingCanvas = true;
       State.dragStart.x = e.clientX - State.transform.x;
       State.dragStart.y = e.clientY - State.transform.y;
@@ -453,7 +464,7 @@ const chronos = {
         // Multiplicative zoom for smoothness
         const zoomIntensity = 0.002;
         const delta = -e.deltaY * zoomIntensity;
-        const newScale = Math.min(Math.max(0.05, State.transform.scale * (1 + delta)), 10);
+        const newScale = Math.min(Math.max(0.05, State.transform.scale * (1 + delta)), 5);
         
         // Offset adjustment to keep pointer fixed
         State.transform.x = pointerX - (pointerX - State.transform.x) * (newScale / State.transform.scale);
@@ -523,6 +534,19 @@ const chronos = {
     this.fitToScreen();
   },
 
+  zoom(delta) {
+    const vp = document.getElementById('view-timeline');
+    const rect = vp.getBoundingClientRect();
+    const pointerX = rect.width / 2;
+    const pointerY = rect.height / 2;
+
+    const newScale = Math.min(Math.max(0.05, State.transform.scale * (1 + delta)), 5);
+    State.transform.x = pointerX - (pointerX - State.transform.x) * (newScale / State.transform.scale);
+    State.transform.y = pointerY - (pointerY - State.transform.y) * (newScale / State.transform.scale);
+    State.transform.scale = newScale;
+    this.requestRender();
+  },
+
   requestRender() {
     if (State.renderPending) return;
     State.renderPending = true;
@@ -558,6 +582,15 @@ const chronos = {
       }
     });
 
+    // Include the axis in the bounds
+    if (State.layout === 'x') {
+      minY = Math.min(minY, 0);
+      maxY = Math.max(maxY, 0);
+    } else {
+      minX = Math.min(minX, 0);
+      maxX = Math.max(maxX, 0);
+    }
+
     const padding = 100;
     const contentWidth = (maxX - minX) || 1000;
     const contentHeight = (maxY - minY) || 1000;
@@ -568,7 +601,7 @@ const chronos = {
 
     const scaleX = (vpWidth - padding * 2) / contentWidth;
     const scaleY = (vpHeight - padding * 2) / contentHeight;
-    const newScale = Math.min(scaleX, scaleY, 1.5); // Cap max zoom
+    const newScale = Math.min(scaleX, scaleY, 1.2); // Cap max zoom
 
     const centerX = minX + contentWidth / 2;
     const centerY = minY + contentHeight / 2;
@@ -618,15 +651,13 @@ const chronos = {
     d.dateDisplay.innerText = newDateStr + ' (Mutating)';
     d.newDateStr = newDateStr;
 
-    // Update SVG Stem dynamically
+    // Update DOM Stem dynamically
     const stem = document.getElementById(`stem_${d.ev.id}`);
     if (stem) {
       if (State.layout === 'x') {
-        stem.setAttribute('x1', newPx + State.nodeWidth/2);
-        stem.setAttribute('x2', newPx + State.nodeWidth/2);
+        stem.style.left = `${newPx + State.nodeWidth/2}px`;
       } else {
-        stem.setAttribute('y1', newPx + State.nodeHeight/2);
-        stem.setAttribute('y2', newPx + State.nodeHeight/2);
+        stem.style.top = `${newPx + State.nodeHeight/2}px`;
       }
     }
   },
@@ -688,17 +719,21 @@ const chronos = {
       const parser = new DOMParser();
       const doc = parser.parseFromString(searchHtml, 'text/html');
       
-      targetLinks = Array.from(doc.querySelectorAll('.result__a')).slice(0, 3).map(a => {
-        let href = a.getAttribute('href');
-        if (href.includes('uddg=')) {
-          try { href = decodeURIComponent(new URL(href, 'https://duckduckgo.com').searchParams.get('uddg')); } catch(e){}
-        }
-        return href;
-      });
+      // V8 Upgrade: Filter out DuckDuckGo ad trackers (y.js)
+      targetLinks = Array.from(doc.querySelectorAll('.result__a'))
+        .map(a => {
+          let href = a.getAttribute('href');
+          if (href && href.includes('uddg=')) {
+            try { href = decodeURIComponent(new URL(href, 'https://duckduckgo.com').searchParams.get('uddg')); } catch(e){}
+          }
+          return href;
+        })
+        .filter(href => href && href.startsWith('http') && !href.includes('duckduckgo.com/y.js'))
+        .slice(0, 3);
       
       if(targetLinks.length > 0) {
         this.setFlow('search', 'done');
-        this.log(`Search complete. Acquired ${targetLinks.length} primary targets.`, "SUCCESS");
+        this.log(`Search complete. Acquired ${targetLinks.length} organic targets (Ads filtered).`, "SUCCESS");
       } else {
         throw new Error("HTML structure change or bot-check prevented link extraction.");
       }
@@ -758,7 +793,22 @@ const chronos = {
       const groqData = await groqRes.json();
       const rawJson = JSON.parse(groqData.choices[0].message.content);
       
-      let newEvents = Array.isArray(rawJson) ? rawJson : (rawJson.items || rawJson.events || Object.values(rawJson).find(v => Array.isArray(v)) ||[]);
+      // V8 Upgrade: Bulletproof JSON extraction
+      let newEvents =[];
+      if (rawJson.events && Array.isArray(rawJson.events)) {
+        newEvents = rawJson.events;
+      } else if (Array.isArray(rawJson)) {
+        newEvents = rawJson;
+      } else {
+        // Fallback: find the first array that actually contains objects
+        const possibleArrays = Object.values(rawJson).filter(v => Array.isArray(v));
+        for (const arr of possibleArrays) {
+          if (arr.length > 0 && typeof arr[0] === 'object' && arr[0] !== null && !Array.isArray(arr[0])) {
+            newEvents = arr;
+            break;
+          }
+        }
+      }
       
       this.setFlow('parse', 'done');
       this.log(`Semantic parsing complete. Identified ${newEvents.length} temporal nodes.`, "SUCCESS");
@@ -782,7 +832,10 @@ const chronos = {
   mergeData(newEvents) {
     let added = 0, updated = 0;
     
-    newEvents.forEach(ev => {
+    // V8 Upgrade: Strict type checking to prevent "can't assign to property id on string"
+    const validEvents = newEvents.filter(ev => typeof ev === 'object' && ev !== null && !Array.isArray(ev));
+
+    validEvents.forEach(ev => {
       if (!ev.id) ev.id = Utils.generateId();
       if (!ev.start) return; 
       
@@ -812,7 +865,7 @@ const chronos = {
     if(document.getElementById('view-histogram').classList.contains('active')) this.renderHistogram();
   },
 
-  // --- 8. DOM & SVG RENDERERS ---
+  // --- 8. DOM RENDERERS ---
   calculateLayout() {
     // Smart Collision-Free Lane Algorithm
     let lanesSide1 =[]; // Top or Left
@@ -830,25 +883,25 @@ const chronos = {
       maxPos = Math.max(maxPos, posPx);
 
       let placed = false;
-      let laneIdx = 0;
+      let laneIdx = 1; // 1-based index for easier math
       
-      // We alternate sides for visual balance, but fall back to closest available lane
+      // Alternate sides for visual balance
       const preferSide1 = idx % 2 === 0;
       
       while(!placed) {
         if (preferSide1) {
           if (!lanesSide1[laneIdx] || lanesSide1[laneIdx] < posPx - State.lanePadding) {
-            ev.lane = laneIdx; ev.side = 1; lanesSide1[laneIdx] = posPx + State.nodeWidth; placed = true; break;
+            ev.lane = laneIdx; ev.side = -1; lanesSide1[laneIdx] = posPx + State.nodeWidth; placed = true; break;
           }
           if (!lanesSide2[laneIdx] || lanesSide2[laneIdx] < posPx - State.lanePadding) {
-            ev.lane = laneIdx; ev.side = 2; lanesSide2[laneIdx] = posPx + State.nodeWidth; placed = true; break;
+            ev.lane = laneIdx; ev.side = 1; lanesSide2[laneIdx] = posPx + State.nodeWidth; placed = true; break;
           }
         } else {
           if (!lanesSide2[laneIdx] || lanesSide2[laneIdx] < posPx - State.lanePadding) {
-            ev.lane = laneIdx; ev.side = 2; lanesSide2[laneIdx] = posPx + State.nodeWidth; placed = true; break;
+            ev.lane = laneIdx; ev.side = 1; lanesSide2[laneIdx] = posPx + State.nodeWidth; placed = true; break;
           }
           if (!lanesSide1[laneIdx] || lanesSide1[laneIdx] < posPx - State.lanePadding) {
-            ev.lane = laneIdx; ev.side = 1; lanesSide1[laneIdx] = posPx + State.nodeWidth; placed = true; break;
+            ev.lane = laneIdx; ev.side = -1; lanesSide1[laneIdx] = posPx + State.nodeWidth; placed = true; break;
           }
         }
         laneIdx++;
@@ -857,14 +910,14 @@ const chronos = {
       // Assign final coordinates
       if (State.layout === 'x') {
         ev.renderX = posPx;
-        ev.renderY = ev.side === 1 
-          ? -State.axisOffset - (ev.lane * (State.nodeHeight + State.lanePadding)) - State.nodeHeight
-          : State.axisOffset + (ev.lane * (State.nodeHeight + State.lanePadding));
+        ev.renderY = ev.side === -1 
+          ? -State.axisOffset - (ev.lane * State.nodeHeight) - ((ev.lane - 1) * State.lanePadding)
+          : State.axisOffset + ((ev.lane - 1) * State.nodeHeight) + ((ev.lane - 1) * State.lanePadding);
       } else {
         ev.renderY = posPx;
-        ev.renderX = ev.side === 1 
-          ? -State.axisOffset - (ev.lane * (State.nodeWidth + State.lanePadding)) - State.nodeWidth
-          : State.axisOffset + (ev.lane * (State.nodeWidth + State.lanePadding));
+        ev.renderX = ev.side === -1 
+          ? -State.axisOffset - (ev.lane * State.nodeWidth) - ((ev.lane - 1) * State.lanePadding)
+          : State.axisOffset + ((ev.lane - 1) * State.nodeWidth) + ((ev.lane - 1) * State.lanePadding);
       }
     });
 
@@ -872,94 +925,121 @@ const chronos = {
   },
 
   renderTimeline() {
-    const container = document.getElementById('nodesContainer');
-    const svg = document.getElementById('timelineSvg');
-    
-    container.innerHTML = '';
-    svg.innerHTML = '';
+    const layer = document.getElementById('canvasLayer');
+    layer.innerHTML = ''; // Clear everything
     
     if (!State.events.length) return;
 
     const bounds = this.calculateLayout();
-    
-    // Setup SVG Canvas Size
-    const svgPad = 5000; // Large padding for infinite feel
-    let svgWidth = 0, svgHeight = 0, svgOffsetX = 0, svgOffsetY = 0;
-
-    if (State.layout === 'x') {
-      svgWidth = (bounds.maxPos - bounds.minPos) + svgPad * 2;
-      svgHeight = 4000;
-      svgOffsetX = bounds.minPos - svgPad;
-      svgOffsetY = -2000;
-    } else {
-      svgWidth = 4000;
-      svgHeight = (bounds.maxPos - bounds.minPos) + svgPad * 2;
-      svgOffsetX = -2000;
-      svgOffsetY = bounds.minPos - svgPad;
-    }
-
-    svg.setAttribute('viewBox', `${svgOffsetX} ${svgOffsetY} ${svgWidth} ${svgHeight}`);
-    svg.style.width = `${svgWidth}px`;
-    svg.style.height = `${svgHeight}px`;
-    svg.style.transform = `translate(${svgOffsetX}px, ${svgOffsetY}px)`;
-
-    let svgContent = '';
-
-    // Draw Axis Line
-    if (State.layout === 'x') {
-      svgContent += `<line x1="${svgOffsetX}" y1="0" x2="${svgOffsetX + svgWidth}" y2="0" class="svg-axis" />`;
-    } else {
-      svgContent += `<line x1="0" y1="${svgOffsetY}" x2="0" y2="${svgOffsetY + svgHeight}" class="svg-axis" />`;
-    }
-
     const fragment = document.createDocumentFragment();
 
+    // 1. Draw Central Axis
+    const axis = document.createElement('div');
+    axis.className = 'dom-axis';
+    const axisPadding = 1000; // Extend axis beyond first/last nodes
+    if (State.layout === 'x') {
+      axis.style.left = `${bounds.minPos - axisPadding}px`;
+      axis.style.top = `0px`;
+      axis.style.width = `${(bounds.maxPos - bounds.minPos) + (axisPadding * 2)}px`;
+      axis.style.height = `2px`;
+    } else {
+      axis.style.left = `0px`;
+      axis.style.top = `${bounds.minPos - axisPadding}px`;
+      axis.style.width = `2px`;
+      axis.style.height = `${(bounds.maxPos - bounds.minPos) + (axisPadding * 2)}px`;
+    }
+    fragment.appendChild(axis);
+
+    // 2. Draw Nodes, Stems, and Durations
     State.events.forEach(ev => {
-      // Draw SVG Elements (Stems, Ticks, Durations)
       const isX = State.layout === 'x';
-      const nodeCenter = isX ? ev.renderX + State.nodeWidth/2 : ev.renderY + State.nodeHeight/2;
+      const nodeCenterX = ev.renderX + State.nodeWidth / 2;
+      const nodeCenterY = ev.renderY + State.nodeHeight / 2;
+
+      // --- STEM ---
+      const stem = document.createElement('div');
+      stem.className = 'dom-stem';
+      stem.id = `stem_${ev.id}`;
       
       if (isX) {
-        // Tick
-        svgContent += `<line x1="${nodeCenter}" y1="-6" x2="${nodeCenter}" y2="6" class="svg-tick" />`;
-        // Stem
-        const stemY = ev.side === 1 ? ev.renderY + State.nodeHeight : ev.renderY;
-        svgContent += `<line id="stem_${ev.id}" x1="${nodeCenter}" y1="0" x2="${nodeCenter}" y2="${stemY}" class="svg-stem" />`;
-        // Date Text on Axis
-        svgContent += `<text x="${nodeCenter}" y="${ev.side === 1 ? 18 : -10}" text-anchor="middle" class="svg-text">${ev.start.substring(0,4)}</text>`;
-        
-        // Duration Bar
-        if (ev.end) {
-          const msEnd = Utils.parseDate(ev.end);
-          if (msEnd) {
-            const endPx = State.spacingMode === 'temporal' ? Utils.timeToPixels(msEnd) : ev.renderX + State.nodeSpacingEq * 0.8;
-            const width = Math.max(endPx - ev.renderX, 10);
-            svgContent += `<rect x="${ev.renderX}" y="-4" width="${width}" height="8" class="svg-duration" />`;
-            svgContent += `<line x1="${ev.renderX}" y1="0" x2="${ev.renderX + width}" y2="0" class="svg-duration-line" />`;
-          }
+        stem.style.left = `${nodeCenterX}px`;
+        stem.style.width = `2px`;
+        if (ev.side === -1) { // Above axis
+          const bottomOfNode = ev.renderY + State.nodeHeight;
+          stem.style.top = `${bottomOfNode}px`;
+          stem.style.height = `${Math.abs(bottomOfNode)}px`;
+        } else { // Below axis
+          stem.style.top = `0px`;
+          stem.style.height = `${ev.renderY}px`;
         }
       } else {
-        // Tick
-        svgContent += `<line x1="-6" y1="${nodeCenter}" x2="6" y2="${nodeCenter}" class="svg-tick" />`;
-        // Stem
-        const stemX = ev.side === 1 ? ev.renderX + State.nodeWidth : ev.renderX;
-        svgContent += `<line id="stem_${ev.id}" x1="0" y1="${nodeCenter}" x2="${stemX}" y2="${nodeCenter}" class="svg-stem" />`;
-        // Date Text on Axis
-        svgContent += `<text x="${ev.side === 1 ? 12 : -12}" y="${nodeCenter + 4}" text-anchor="${ev.side === 1 ? 'start' : 'end'}" class="svg-text">${ev.start.substring(0,4)}</text>`;
+        stem.style.top = `${nodeCenterY}px`;
+        stem.style.height = `2px`;
+        if (ev.side === -1) { // Left of axis
+          const rightOfNode = ev.renderX + State.nodeWidth;
+          stem.style.left = `${rightOfNode}px`;
+          stem.style.width = `${Math.abs(rightOfNode)}px`;
+        } else { // Right of axis
+          stem.style.left = `0px`;
+          stem.style.width = `${ev.renderX}px`;
+        }
+      }
+      fragment.appendChild(stem);
+
+      // --- TICK & DATE LABEL ON AXIS ---
+      const tick = document.createElement('div');
+      tick.className = 'dom-tick';
+      const label = document.createElement('div');
+      label.className = 'dom-date-label';
+      label.innerText = ev.start.substring(0, 4);
+
+      if (isX) {
+        tick.style.left = `${nodeCenterX}px`;
+        tick.style.top = `-4px`;
+        tick.style.width = `2px`;
+        tick.style.height = `10px`;
         
-        // Duration Bar
-        if (ev.end) {
-          const msEnd = Utils.parseDate(ev.end);
-          if (msEnd) {
+        label.style.left = `${nodeCenterX}px`;
+        label.style.top = ev.side === -1 ? `16px` : `-16px`;
+      } else {
+        tick.style.top = `${nodeCenterY}px`;
+        tick.style.left = `-4px`;
+        tick.style.height = `2px`;
+        tick.style.width = `10px`;
+
+        label.style.top = `${nodeCenterY}px`;
+        label.style.left = ev.side === -1 ? `24px` : `-24px`;
+      }
+      fragment.appendChild(tick);
+      fragment.appendChild(label);
+
+      // --- DURATION BAR ---
+      if (ev.end) {
+        const msEnd = Utils.parseDate(ev.end);
+        if (msEnd) {
+          const durationBar = document.createElement('div');
+          durationBar.className = 'dom-duration';
+          
+          if (isX) {
+            const endPx = State.spacingMode === 'temporal' ? Utils.timeToPixels(msEnd) : ev.renderX + State.nodeSpacingEq * 0.8;
+            const width = Math.max(endPx - ev.renderX, 10);
+            durationBar.style.left = `${ev.renderX}px`;
+            durationBar.style.top = `-4px`;
+            durationBar.style.width = `${width}px`;
+            durationBar.style.height = `10px`;
+          } else {
             const endPx = State.spacingMode === 'temporal' ? Utils.timeToPixels(msEnd) : ev.renderY + State.nodeSpacingEq * 0.8;
             const height = Math.max(endPx - ev.renderY, 10);
-            svgContent += `<rect x="-4" y="${ev.renderY}" width="8" height="${height}" class="svg-duration" />`;
-            svgContent += `<line x1="0" y1="${ev.renderY}" x2="0" y2="${ev.renderY + height}" class="svg-duration-line" />`;
+            durationBar.style.top = `${ev.renderY}px`;
+            durationBar.style.left = `-4px`;
+            durationBar.style.height = `${height}px`;
+            durationBar.style.width = `10px`;
           }
+          fragment.appendChild(durationBar);
         }
       }
 
-      // Create DOM Node
+      // --- NODE CARD ---
       const el = document.createElement('div');
       el.className = `node type-${ev.type || 'General'}`;
       el.style.left = `${ev.renderX}px`;
@@ -990,8 +1070,7 @@ const chronos = {
       fragment.appendChild(el);
     });
 
-    svg.innerHTML = svgContent;
-    container.appendChild(fragment);
+    layer.appendChild(fragment);
   },
 
   toggleExpand(e, btn, descId) {
@@ -1016,7 +1095,7 @@ const chronos = {
   },
 
   renderHistogram() {
-    const wrap = document.getElementById('histContainer');
+    const wrap = document.getElementById('view-histogram');
     if (!State.events.length) { wrap.innerHTML = ''; return; }
 
     const counts = {};
