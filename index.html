@@ -12,20 +12,20 @@
        1. CSS VARIABLES (STRICT DESIGN SYSTEM)
        ========================================================================== */
     :root {
-      --bg: #050505; --surface: #111111; --surface-elevated: #1a1a1a;
+      --bg: #050505; --surface: #111111; --surface-elevated: #1a1a1a; --surface-glass: rgba(17, 17, 17, 0.7);
       --border: #2a2a2a; --border-focus: #444444;
       --text: #f0f0f0; --text-muted: #888888;
-      --accent: #007aff; --accent-hover: #005bb5;
+      --accent: #007aff; --accent-hover: #005bb5; --accent-glow: rgba(0, 122, 255, 0.3);
       --success: #28cd41; --warning: #ffcc00; --error: #ff3b30;
       --type-person: #bf5af2; --type-event: #ff3b30; --type-general: #007aff;
       --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-      --radius: 6px; --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      --transition: 0.15s cubic-bezier(0.2, 0, 0, 1);
+      --radius: 8px; --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      --transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
     }
 
     [data-theme="light"] {
-      --bg: #f5f5f7; --surface: #ffffff; --surface-elevated: #e8e8ed;
+      --bg: #f5f5f7; --surface: #ffffff; --surface-elevated: #e8e8ed; --surface-glass: rgba(255, 255, 255, 0.7);
       --border: #d2d2d7; --border-focus: #999999;
       --text: #1d1d1f; --text-muted: #86868b;
       --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -33,55 +33,58 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
     body { background: var(--bg); color: var(--text); font-family: var(--font-ui); height: 100vh; display: flex; flex-direction: column; overflow: hidden; font-variant-numeric: tabular-nums; }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb { background: var(--border-focus); border-radius: 3px; }
 
     /* ==========================================================================
-       2. LAYOUT
+       2. LAYOUT & CONTROLS
        ========================================================================== */
-    header { height: 48px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; flex-shrink: 0; z-index: 100; user-select: none; }
-    .brand { font-size: 13px; font-weight: 700; letter-spacing: -0.2px; display: flex; align-items: center; gap: 8px; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); transition: background 0.3s; }
-    .status-dot.working { background: var(--warning); box-shadow: 0 0 8px var(--warning); animation: pulse 1s infinite alternate; }
-    @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
+    header { height: 52px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; z-index: 100; user-select: none; }
+    .brand { font-size: 14px; font-weight: 800; letter-spacing: -0.2px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success); transition: background 0.3s; }
+    .status-dot.working { background: var(--warning); box-shadow: 0 0 10px var(--warning); animation: pulse 1s infinite alternate; }
+    @keyframes pulse { from { opacity: 0.4; } to { opacity: 1; } }
     
     .workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
     
     .sidebar { width: 340px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 50; flex-shrink: 0; transition: transform var(--transition); }
-    .sidebar-section { padding: 16px; border-bottom: 1px solid var(--border); }
+    .sidebar-section { padding: 20px; border-bottom: 1px solid var(--border); }
     .sidebar-section:last-child { border-bottom: none; overflow-y: auto; flex: 1; }
     @media (max-width: 768px) {
       .sidebar { position: absolute; left: 0; top: 0; bottom: 0; transform: translateX(-100%); width: 100%; max-width: 340px; box-shadow: var(--shadow); }
       .sidebar.open { transform: translateX(0); }
     }
 
-    /* Controls */
-    label { font-size: 10px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 0.5px; }
-    input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: var(--radius); font-size: 12px; font-family: inherit; margin-bottom: 12px; transition: border var(--transition); }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-    button { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: var(--radius); cursor: pointer; font-size: 11px; font-weight: 600; transition: all var(--transition); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-    button:hover:not(:disabled) { border-color: var(--border-focus); }
-    button.primary { background: var(--accent); color: #fff; border: none; width: 100%; padding: 10px; font-size: 12px; margin-top: 8px; }
-    button.primary:hover:not(:disabled) { background: var(--accent-hover); }
-    button:disabled { opacity: 0.5; cursor: wait; }
-
-    .segmented-control { display: flex; background: var(--bg); padding: 2px; border-radius: var(--radius); border: 1px solid var(--border); }
-    .segment { flex: 1; padding: 4px 8px; text-align: center; font-size: 11px; color: var(--text-muted); cursor: pointer; border-radius: 4px; user-select: none; }
-    .segment.active { background: var(--surface-elevated); color: var(--text); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    label { font-size: 10px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 0.5px; }
+    input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: var(--radius); font-size: 12px; font-family: inherit; margin-bottom: 16px; transition: border var(--transition), box-shadow var(--transition); }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+    textarea { resize: vertical; min-height: 80px; }
     
-    .switch { position: relative; width: 32px; height: 18px; background: var(--border); border-radius: 18px; cursor: pointer; transition: background var(--transition); display: inline-block; vertical-align: middle; }
-    .switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: transform var(--transition); }
-    .switch.on { background: var(--accent); }
-    .switch.on::after { transform: translateX(14px); }
+    button { background: var(--surface-elevated); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: var(--radius); cursor: pointer; font-size: 11px; font-weight: 600; transition: all var(--transition); display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    button:hover:not(:disabled) { border-color: var(--border-focus); background: var(--border); }
+    button.primary { background: var(--accent); color: #fff; border: none; width: 100%; padding: 12px; font-size: 12px; margin-top: 4px; box-shadow: 0 4px 12px var(--accent-glow); }
+    button.primary:hover:not(:disabled) { background: var(--accent-hover); box-shadow: 0 6px 16px var(--accent-glow); }
+    button:disabled { opacity: 0.5; cursor: wait; box-shadow: none; }
 
-    .flow-path { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; background: var(--bg); padding: 12px; border-radius: var(--radius); border: 1px solid var(--border); }
-    .flow-step { display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--text-muted); transition: color var(--transition); font-family: var(--font-mono); }
-    .flow-step::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+    .segmented-control { display: flex; background: var(--bg); padding: 3px; border-radius: var(--radius); border: 1px solid var(--border); }
+    .segment { flex: 1; padding: 6px 10px; text-align: center; font-size: 11px; color: var(--text-muted); cursor: pointer; border-radius: 5px; user-select: none; font-weight: 500; transition: all var(--transition); }
+    .segment.active { background: var(--surface-elevated); color: var(--text); font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    
+    .switch { position: relative; width: 36px; height: 20px; background: var(--border); border-radius: 20px; cursor: pointer; transition: background var(--transition); display: inline-block; vertical-align: middle; }
+    .switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform var(--transition); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .switch.on { background: var(--accent); }
+    .switch.on::after { transform: translateX(16px); }
+
+    .flow-path { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; background: var(--bg); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); }
+    .flow-step { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--text-muted); transition: color var(--transition); font-family: var(--font-mono); }
+    .flow-step::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all var(--transition); }
     .flow-step.active { color: var(--accent); font-weight: 600; }
-    .flow-step.active::before { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+    .flow-step.active::before { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
     .flow-step.done { color: var(--success); }
-    .flow-step.done::before { background: var(--success); }
+    .flow-step.done::before { background: var(--success); box-shadow: 0 0 8px var(--success); }
+    .flow-step.fail { color: var(--error); }
+    .flow-step.fail::before { background: var(--error); box-shadow: 0 0 8px var(--error); }
 
     /* ==========================================================================
        3. VIEWS (TIMELINE, TABLE, HISTOGRAM)
@@ -92,70 +95,78 @@
     /* Canvas (Timeline) */
     .viewport { flex: 1; overflow: hidden; position: relative; cursor: grab; background-color: var(--bg); background-image: radial-gradient(var(--border) 1px, transparent 1px); background-size: calc(50px * var(--scale)) calc(50px * var(--scale)); background-position: calc(var(--pan-x) * 1px) calc(var(--pan-y) * 1px); will-change: background-position; }
     .viewport:active { cursor: grabbing; }
-    .canvas-layer { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; pointer-events: none; }
     
-    /* Mathematical Infinite Axis Line */
-    .axis-line { position: absolute; background: var(--border-focus); pointer-events: none; opacity: 0.5; }
-    .layout-x .axis-line { height: 2px; width: 200000px; left: -100000px; top: 0; transform: translateY(-50%); }
-    .layout-y .axis-line { width: 2px; height: 200000px; top: -100000px; left: 0; transform: translateX(-50%); }
+    .canvas-layer { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; pointer-events: none; width: 0; height: 0; }
+    
+    /* SVG Overlay for Lines & Axis */
+    #timelineSvg { position: absolute; top: 0; left: 0; overflow: visible; pointer-events: none; z-index: 1; }
+    .svg-axis { stroke: var(--border-focus); stroke-width: 2; stroke-dasharray: 4 4; }
+    .svg-tick { stroke: var(--border-focus); stroke-width: 2; }
+    .svg-stem { stroke: var(--border-focus); stroke-width: 1.5; opacity: 0.6; transition: stroke 0.2s; }
+    .svg-duration { fill: var(--accent); opacity: 0.2; rx: 4; ry: 4; }
+    .svg-duration-line { stroke: var(--accent); stroke-width: 2; }
+    .svg-text { fill: var(--text-muted); font-family: var(--font-mono); font-size: 10px; font-weight: 600; user-select: none; }
 
     /* Timeline Nodes */
-    .node { position: absolute; background: var(--surface); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius); width: 260px; box-shadow: var(--shadow); cursor: pointer; pointer-events: auto; user-select: none; transition: box-shadow var(--transition), border-color var(--transition); }
-    .node:hover, .node.dragging { border-color: var(--text-muted); z-index: 100; }
+    #nodesContainer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
     
-    .layout-x .node { top: 0; transform: translate(-50%, -50%); }
-    .layout-y .node { left: 0; transform: translate(-50%, -50%); }
+    .node { position: absolute; background: var(--surface-glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); padding: 14px; border-radius: var(--radius); width: 280px; box-shadow: var(--shadow); cursor: pointer; pointer-events: auto; user-select: none; transition: box-shadow var(--transition), border-color var(--transition), transform 0.1s; display: flex; flex-direction: column; gap: 8px; }
+    .node:hover, .node.dragging { border-color: var(--text-muted); z-index: 100; box-shadow: 0 12px 40px rgba(0,0,0,0.6); }
+    .node.dragging { transform: scale(1.02); cursor: grabbing; }
 
     .type-Person { border-top: 3px solid var(--type-person); }
+    .type-Person:hover { border-color: var(--type-person); box-shadow: 0 8px 32px rgba(191, 90, 242, 0.2); }
     .type-Event { border-top: 3px solid var(--type-event); }
+    .type-Event:hover { border-color: var(--type-event); box-shadow: 0 8px 32px rgba(255, 59, 48, 0.2); }
     .type-General { border-top: 3px solid var(--type-general); }
-    
-    .fade-start { mask-image: linear-gradient(to right, transparent, black 15%); -webkit-mask-image: linear-gradient(to right, transparent, black 15%); }
-    .fade-end { mask-image: linear-gradient(to left, transparent, black 15%); -webkit-mask-image: linear-gradient(to left, transparent, black 15%); }
+    .type-General:hover { border-color: var(--type-general); box-shadow: 0 8px 32px rgba(0, 122, 255, 0.2); }
 
-    .node-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-    .node-date { font-family: var(--font-mono); font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 0.5px; }
-    .node-title { font-size: 13px; font-weight: 700; line-height: 1.3; color: var(--text); }
+    .node-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .node-date { font-family: var(--font-mono); font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 0.5px; background: rgba(0, 122, 255, 0.1); padding: 2px 6px; border-radius: 4px; }
+    .node-type-badge { font-size: 9px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; color: var(--text-muted); }
     
-    .node-detail { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+    .node-title { font-size: 14px; font-weight: 700; line-height: 1.3; color: var(--text); }
+    
+    .node-detail { display: none; margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border); }
     .node.expanded .node-detail { display: block; }
-    .node-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; transition: all var(--transition); }
+    .node-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; transition: all var(--transition); }
     .node-desc.full { -webkit-line-clamp: unset; }
-    .node-more { font-size: 10px; color: var(--accent); cursor: pointer; margin-top: 6px; text-transform: uppercase; font-weight: 700; }
-    .node-src { font-size: 9px; margin-top: 8px; word-break: break-all; }
-    .node-src a { color: var(--text-muted); text-decoration: none; }
+    .node-more { font-size: 10px; color: var(--accent); cursor: pointer; margin-top: 8px; text-transform: uppercase; font-weight: 800; display: inline-block; }
+    .node-src { font-size: 10px; margin-top: 10px; word-break: break-all; background: var(--bg); padding: 6px; border-radius: 4px; border: 1px solid var(--border); }
+    .node-src a { color: var(--text-muted); text-decoration: none; display: block; margin-bottom: 2px; }
     .node-src a:hover { color: var(--accent); }
 
-    .drag-tooltip { position: absolute; background: var(--accent); color: #fff; font-family: var(--font-mono); font-size: 10px; padding: 4px 8px; border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity var(--transition); z-index: 200; transform: translate(-50%, -200%); }
+    .drag-tooltip { position: absolute; background: var(--text); color: var(--bg); font-family: var(--font-mono); font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity var(--transition); z-index: 200; transform: translate(-50%, -150%); left: 50%; top: 0; white-space: nowrap; }
     .node.dragging .drag-tooltip { opacity: 1; }
 
     /* Borderless Table */
     .table-view { padding: 0; overflow-y: auto; background: var(--bg); }
     table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
-    th { color: var(--text-muted); padding: 14px 24px; font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: var(--surface); z-index: 2; border-bottom: 1px solid var(--border); }
-    td { padding: 14px 24px; color: var(--text); border: none; }
-    tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+    th { color: var(--text-muted); padding: 16px 24px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: var(--surface); z-index: 2; border-bottom: 1px solid var(--border); }
+    td { padding: 16px 24px; color: var(--text); border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:nth-child(even) { background: rgba(255,255,255,0.01); }
     tr:hover { background: var(--surface-elevated); }
 
-    /* Fix: Histogram Plotting */
-    .hist-view { padding: 40px; display: flex; align-items: flex-end; justify-content: flex-start; gap: 8px; overflow-x: auto; overflow-y: hidden; background: var(--bg); height: 100%; min-height: 0; }
-    .hist-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-width: 50px; height: 100%; position: relative; }
-    .hist-bar { width: 100%; background: var(--border-focus); border-radius: 4px 4px 0 0; transition: height 0.4s cubic-bezier(0.2, 0, 0, 1), background 0.2s; min-height: 4px; position: relative; cursor: pointer; }
-    .hist-col:hover .hist-bar { background: var(--accent); }
-    .hist-label { font-size: 10px; color: var(--text-muted); margin-top: 12px; font-family: var(--font-mono); transform: rotate(-45deg); transform-origin: top left; white-space: nowrap; }
-    .hist-tooltip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--surface-elevated); padding: 6px 10px; border-radius: 4px; font-size: 11px; opacity: 0; pointer-events: none; transition: opacity 0.2s; white-space: nowrap; border: 1px solid var(--border); box-shadow: var(--shadow); z-index: 10; font-weight: bold; }
+    /* Histogram Plotting */
+    .hist-view { padding: 40px; display: flex; align-items: flex-end; justify-content: flex-start; gap: 12px; overflow-x: auto; overflow-y: hidden; background: var(--bg); height: 100%; min-height: 0; }
+    .hist-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-width: 60px; height: 100%; position: relative; }
+    .hist-bar { width: 100%; background: var(--border-focus); border-radius: 6px 6px 0 0; transition: height 0.5s cubic-bezier(0.2, 0, 0, 1), background 0.2s; min-height: 4px; position: relative; cursor: pointer; }
+    .hist-col:hover .hist-bar { background: var(--accent); box-shadow: 0 0 16px var(--accent-glow); }
+    .hist-label { font-size: 11px; color: var(--text-muted); margin-top: 16px; font-family: var(--font-mono); transform: rotate(-45deg); transform-origin: top left; white-space: nowrap; font-weight: 600; }
+    .hist-tooltip { position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 6px 12px; border-radius: 6px; font-size: 12px; opacity: 0; pointer-events: none; transition: opacity 0.2s; white-space: nowrap; box-shadow: var(--shadow); z-index: 10; font-weight: bold; }
+    .hist-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border-width: 6px; border-style: solid; border-color: var(--text) transparent transparent transparent; }
     .hist-col:hover .hist-tooltip { opacity: 1; }
 
     /* ==========================================================================
        4. LOGS
        ========================================================================== */
-    .logs-drawer { position: fixed; bottom: 0; left: 340px; right: 0; height: 220px; background: var(--surface); border-top: 1px solid var(--border); z-index: 150; display: flex; flex-direction: column; transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1); box-shadow: 0 -4px 20px rgba(0,0,0,0.5); }
+    .logs-drawer { position: fixed; bottom: 0; left: 340px; right: 0; height: 240px; background: var(--surface); border-top: 1px solid var(--border); z-index: 150; display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); box-shadow: 0 -8px 32px rgba(0,0,0,0.4); }
     @media (max-width: 768px) { .logs-drawer { left: 0; } }
-    .logs-drawer.collapsed { transform: translateY(188px); }
-    .log-header { padding: 8px 16px; background: var(--surface-elevated); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 700; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; cursor: pointer; letter-spacing: 0.5px; }
-    .log-scroll { flex: 1; overflow-y: auto; padding: 12px 16px; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); line-height: 1.6; }
-    .log-entry { margin-bottom: 2px; word-break: break-all; }
-    .log-entry .time { color: var(--border-focus); margin-right: 8px; }
+    .logs-drawer.collapsed { transform: translateY(204px); }
+    .log-header { padding: 10px 20px; background: var(--surface-elevated); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 800; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; cursor: pointer; letter-spacing: 0.5px; }
+    .log-scroll { flex: 1; overflow-y: auto; padding: 16px 20px; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); line-height: 1.6; }
+    .log-entry { margin-bottom: 4px; word-break: break-all; }
+    .log-entry .time { color: var(--border-focus); margin-right: 10px; user-select: none; }
     .log-entry.INFO { color: var(--text); }
     .log-entry.SUCCESS { color: var(--success); }
     .log-entry.WARN { color: var(--warning); }
@@ -171,7 +182,7 @@
     CHRONOS ENTERPRISE
   </div>
   
-  <div class="segmented-control" style="width: 240px;">
+  <div class="segmented-control" style="width: 280px;">
     <div class="segment active" onclick="chronos.switchView('timeline')">Timeline</div>
     <div class="segment" onclick="chronos.switchView('table')">Table</div>
     <div class="segment" onclick="chronos.switchView('histogram')">Plots</div>
@@ -181,7 +192,7 @@
     <button onclick="chronos.exportData('json')">Export JSON</button>
     <button onclick="chronos.exportData('schema')">Export Schema</button>
     <div class="switch on" id="themeToggle" title="Dark/Light Mode"></div>
-    <button id="mobileMenu" style="display:none; padding:4px 8px;" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+    <button id="mobileMenu" style="display:none; padding:6px 10px;" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
   </div>
 </header>
 
@@ -191,7 +202,7 @@
       <label>Target Directive</label>
       <textarea id="promptInput" placeholder="Specify extraction target. e.g. 'Timeline of the Apollo space program, including key personnel and incidents.'"></textarea>
       
-      <div style="display:flex; gap:8px;">
+      <div style="display:flex; gap:12px;">
         <div style="flex:1;">
           <label>Groq API (GSK)</label>
           <input type="password" id="apiKeyInput" placeholder="gsk_..." autocomplete="off">
@@ -230,27 +241,28 @@
     <div class="sidebar-section">
       <label>Spatial Parameters</label>
       
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <span style="font-size:11px; color:var(--text-muted)">Spacing Engine</span>
-        <div class="segmented-control" style="width:140px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <span style="font-size:11px; color:var(--text-muted); font-weight:600;">Spacing Engine</span>
+        <div class="segmented-control" style="width:150px;">
           <div class="segment active" id="btnSpaceEq" onclick="chronos.setSpacing('equidistant')">Equidistant</div>
           <div class="segment" id="btnSpaceTm" onclick="chronos.setSpacing('temporal')">Temporal</div>
         </div>
       </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <span style="font-size:11px; color:var(--text-muted)">Axis Orientation</span>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <span style="font-size:11px; color:var(--text-muted); font-weight:600;">Axis Orientation</span>
         <div class="segmented-control" style="width:100px;">
           <div class="segment active" id="btnAxisX" onclick="chronos.setAxis('x')">X</div>
           <div class="segment" id="btnAxisY" onclick="chronos.setAxis('y')">Y</div>
         </div>
       </div>
+
+      <button onclick="chronos.fitToScreen()" style="width:100%; margin-bottom:16px;">Recenter & Fit View</button>
       
-      <div style="font-size:10px; color:var(--text-muted); line-height:1.6; font-family:var(--font-mono); background:var(--bg); padding:8px; border-radius:4px; border:1px solid var(--border);">
-        [INTERACTION_MATRIX]<br>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.6; font-family:var(--font-mono); background:var(--bg); padding:12px; border-radius:6px; border:1px solid var(--border);">[INTERACTION_MATRIX]<br>
         • Drag background to pan<br>
         • Wheel/Pinch to precise zoom<br>
-        • Drag node to mutate (Temporal only)<br>
+        • Drag node to mutate (Temporal)<br>
         • Click node to expand payload
       </div>
     </div>
@@ -258,8 +270,9 @@
 
   <main id="view-timeline" class="view active viewport layout-x">
     <div class="canvas-layer" id="canvasLayer">
-      <div class="axis-line" id="axisLine"></div>
-      </div>
+      <svg id="timelineSvg"></svg>
+      <div id="nodesContainer"></div>
+    </div>
   </main>
 
   <main id="view-table" class="view table-view">
@@ -275,9 +288,9 @@
 <div class="logs-drawer collapsed" id="logsDrawer">
   <div class="log-header" onclick="document.getElementById('logsDrawer').classList.toggle('collapsed')">
     <span>Verbose System Logs</span>
-    <div style="display:flex; gap:12px; align-items:center;">
-      <button onclick="chronos.copyLogs(event)" style="padding:2px 8px; font-size:9px;">COPY</button>
-      <span style="font-size:8px;">▲/▼</span>
+    <div style="display:flex; gap:16px; align-items:center;">
+      <button onclick="chronos.copyLogs(event)" style="padding:4px 10px; font-size:10px;">COPY</button>
+      <span style="font-size:10px;">▲/▼</span>
     </div>
   </div>
   <div class="log-scroll" id="logScroll"></div>
@@ -285,9 +298,9 @@
 
 <script>
 /**
- * CHRONOS ENTERPRISE ENGINE (V5.0)
+ * CHRONOS ENTERPRISE ENGINE (V6.0)
  * Authored by: Silas.
- * Additions: Flawless pan/zoom math, Equidistant vs Temporal plotting, Fixed Histogram rendering.
+ * Upgrades: Smart collision-free lane rendering, SVG spatial overlay, Auto-fit bounds, Glassmorphic UI.
  */
 
 "use strict";
@@ -314,7 +327,7 @@ const JSON_SCHEMA = {
       "fadeStart": { "type": "boolean" },
       "fadeEnd": { "type": "boolean" }
     },
-    "required": ["id", "title", "start", "type", "description"]
+    "required":["id", "title", "start", "type", "description"]
   }
 };
 
@@ -349,10 +362,10 @@ const Network = {
 };
 
 const State = {
-  events: [],
+  events:[],
   layout: 'x', // 'x' | 'y'
   spacingMode: 'equidistant', // 'equidistant' | 'temporal'
-  pixelsPerDay: 1, // Base temporal resolution
+  pixelsPerDay: 2, // Base temporal resolution
   baseTime: Date.now(),
   
   // Canvas Transform
@@ -361,7 +374,14 @@ const State = {
   dragStart: { x: 0, y: 0 },
   
   draggingNode: null,
-  renderPending: false
+  renderPending: false,
+  
+  // Layout Constants
+  nodeWidth: 280,
+  nodeHeight: 140, // Approx height for collision
+  lanePadding: 40,
+  axisOffset: 60,
+  nodeSpacingEq: 350
 };
 
 const Utils = {
@@ -378,11 +398,11 @@ const chronos = {
   init() {
     this.bindDOM();
     this.restoreSettings();
-    this.log("Chronos V5 Engine Initialized. Multi-tier routing and precision plotting active.", "SUCCESS");
+    this.log("Chronos V6 Engine Initialized. Smart collision routing active.", "SUCCESS");
     if(window.innerWidth < 768) document.getElementById('mobileMenu').style.display = 'block';
     
     // Initial centering
-    State.transform.x = 100;
+    State.transform.x = window.innerWidth / 2;
     State.transform.y = window.innerHeight / 2;
     this.requestRender();
   },
@@ -433,7 +453,7 @@ const chronos = {
         // Multiplicative zoom for smoothness
         const zoomIntensity = 0.002;
         const delta = -e.deltaY * zoomIntensity;
-        const newScale = Math.min(Math.max(0.1, State.transform.scale * (1 + delta)), 10);
+        const newScale = Math.min(Math.max(0.05, State.transform.scale * (1 + delta)), 10);
         
         // Offset adjustment to keep pointer fixed
         State.transform.x = pointerX - (pointerX - State.transform.x) * (newScale / State.transform.scale);
@@ -488,9 +508,8 @@ const chronos = {
     
     State.layout = axis;
     document.getElementById('view-timeline').className = `view active viewport layout-${axis}`;
-    State.transform = { x: window.innerWidth/4, y: window.innerHeight/2, scale: 1 };
-    this.requestRender();
     this.renderTimeline();
+    this.fitToScreen();
   },
 
   setSpacing(mode) {
@@ -501,6 +520,7 @@ const chronos = {
     State.spacingMode = mode;
     this.log(`Spacing engine switched to: ${mode.toUpperCase()}`, "INFO");
     this.renderTimeline();
+    this.fitToScreen();
   },
 
   requestRender() {
@@ -518,6 +538,47 @@ const chronos = {
     vp.style.setProperty('--pan-y', State.transform.y);
     vp.style.setProperty('--scale', State.transform.scale);
     State.renderPending = false;
+  },
+
+  fitToScreen() {
+    if (!State.events.length) {
+      State.transform = { x: window.innerWidth/2, y: window.innerHeight/2, scale: 1 };
+      this.requestRender();
+      return;
+    }
+
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    
+    State.events.forEach(ev => {
+      if (ev.renderX !== undefined && ev.renderY !== undefined) {
+        minX = Math.min(minX, ev.renderX);
+        maxX = Math.max(maxX, ev.renderX + State.nodeWidth);
+        minY = Math.min(minY, ev.renderY);
+        maxY = Math.max(maxY, ev.renderY + State.nodeHeight);
+      }
+    });
+
+    const padding = 100;
+    const contentWidth = (maxX - minX) || 1000;
+    const contentHeight = (maxY - minY) || 1000;
+    
+    const vp = document.getElementById('view-timeline');
+    const vpWidth = vp.clientWidth;
+    const vpHeight = vp.clientHeight;
+
+    const scaleX = (vpWidth - padding * 2) / contentWidth;
+    const scaleY = (vpHeight - padding * 2) / contentHeight;
+    const newScale = Math.min(scaleX, scaleY, 1.5); // Cap max zoom
+
+    const centerX = minX + contentWidth / 2;
+    const centerY = minY + contentHeight / 2;
+
+    State.transform.scale = newScale;
+    State.transform.x = (vpWidth / 2) - (centerX * newScale);
+    State.transform.y = (vpHeight / 2) - (centerY * newScale);
+
+    this.requestRender();
+    this.log("Viewport recentered and scaled to fit spatial matrix.", "INFO");
   },
 
   startNodeDrag(e, eventId, element) {
@@ -556,6 +617,18 @@ const chronos = {
     d.tooltip.innerText = newDateStr;
     d.dateDisplay.innerText = newDateStr + ' (Mutating)';
     d.newDateStr = newDateStr;
+
+    // Update SVG Stem dynamically
+    const stem = document.getElementById(`stem_${d.ev.id}`);
+    if (stem) {
+      if (State.layout === 'x') {
+        stem.setAttribute('x1', newPx + State.nodeWidth/2);
+        stem.setAttribute('x2', newPx + State.nodeWidth/2);
+      } else {
+        stem.setAttribute('y1', newPx + State.nodeHeight/2);
+        stem.setAttribute('y2', newPx + State.nodeHeight/2);
+      }
+    }
   },
 
   endNodeDrag() {
@@ -571,14 +644,14 @@ const chronos = {
            d.ev.end = Utils.formatDate(newStartMs + duration);
         }
       }
-      this.log(`Node [${d.ev.id}] temporally mutated to ${d.ev.start}`, "WARN");
+      this.log(`Node[${d.ev.id}] temporally mutated to ${d.ev.start}`, "WARN");
       State.events.sort((a,b) => Utils.parseDate(a.start) - Utils.parseDate(b.start));
     }
     
     d.el.classList.remove('dragging');
-    d.dateDisplay.innerText = d.ev.end ? `${d.ev.start} - ${d.ev.end}` : d.ev.start;
+    d.dateDisplay.innerText = d.ev.end ? `${d.ev.start} → ${d.ev.end}` : d.ev.start;
     State.draggingNode = null;
-    this.renderTimeline(); // Re-render to fix stacking
+    this.renderTimeline(); // Re-render to fix stacking and lanes
   },
 
   setFlow(step, status) {
@@ -599,11 +672,10 @@ const chronos = {
 
     btn.disabled = true;
     dot.classList.add('working');
-    document.getElementById('logsDrawer').classList.remove('collapsed');
-    ['search', 'crawl', 'parse', 'map'].forEach(s => this.setFlow(s, ''));
+    document.getElementById('logsDrawer').classList.remove('collapsed');['search', 'crawl', 'parse', 'map'].forEach(s => this.setFlow(s, ''));
     
     let compiledContext = "";
-    let targetLinks = [];
+    let targetLinks =[];
 
     // STEP 1: SEARCH
     try {
@@ -675,7 +747,7 @@ const chronos = {
         headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           model: model,
-          messages: [{role: "system", content: sysPrompt}, {role: "user", content: userPrompt}],
+          messages:[{role: "system", content: sysPrompt}, {role: "user", content: userPrompt}],
           temperature: 0.1,
           response_format: { type: "json_object" }
         })
@@ -686,7 +758,7 @@ const chronos = {
       const groqData = await groqRes.json();
       const rawJson = JSON.parse(groqData.choices[0].message.content);
       
-      let newEvents = Array.isArray(rawJson) ? rawJson : (rawJson.items || rawJson.events || Object.values(rawJson).find(v => Array.isArray(v)) || []);
+      let newEvents = Array.isArray(rawJson) ? rawJson : (rawJson.items || rawJson.events || Object.values(rawJson).find(v => Array.isArray(v)) ||[]);
       
       this.setFlow('parse', 'done');
       this.log(`Semantic parsing complete. Identified ${newEvents.length} temporal nodes.`, "SUCCESS");
@@ -734,82 +806,173 @@ const chronos = {
     
     this.log(`Merge operation: ${added} added, ${updated} updated. Total spatial matrix nodes: ${State.events.length}`, "INFO");
     this.renderTimeline();
+    this.fitToScreen();
+    
     if(document.getElementById('view-table').classList.contains('active')) this.renderTable();
     if(document.getElementById('view-histogram').classList.contains('active')) this.renderHistogram();
   },
 
-  // --- 8. DOM RENDERERS ---
-  renderTimeline() {
-    const layer = document.getElementById('canvasLayer');
-    Array.from(layer.children).forEach(c => { if(c.id !== 'axisLine') layer.removeChild(c); });
+  // --- 8. DOM & SVG RENDERERS ---
+  calculateLayout() {
+    // Smart Collision-Free Lane Algorithm
+    let lanesSide1 =[]; // Top or Left
+    let lanesSide2 =[]; // Bottom or Right
     
-    const fragment = document.createDocumentFragment();
-    
-    const nodeSpacingEq = 350; // Pixels between nodes in Equidistant mode
+    let minPos = Infinity, maxPos = -Infinity;
 
     State.events.forEach((ev, idx) => {
       const msStart = Utils.parseDate(ev.start);
       if(!msStart) return;
       
-      // Compute Position based on mode
-      let posPx;
-      if (State.spacingMode === 'equidistant') {
-        posPx = idx * nodeSpacingEq;
-      } else {
-        posPx = Utils.timeToPixels(msStart);
+      let posPx = (State.spacingMode === 'equidistant') ? idx * State.nodeSpacingEq : Utils.timeToPixels(msStart);
+      
+      minPos = Math.min(minPos, posPx);
+      maxPos = Math.max(maxPos, posPx);
+
+      let placed = false;
+      let laneIdx = 0;
+      
+      // We alternate sides for visual balance, but fall back to closest available lane
+      const preferSide1 = idx % 2 === 0;
+      
+      while(!placed) {
+        if (preferSide1) {
+          if (!lanesSide1[laneIdx] || lanesSide1[laneIdx] < posPx - State.lanePadding) {
+            ev.lane = laneIdx; ev.side = 1; lanesSide1[laneIdx] = posPx + State.nodeWidth; placed = true; break;
+          }
+          if (!lanesSide2[laneIdx] || lanesSide2[laneIdx] < posPx - State.lanePadding) {
+            ev.lane = laneIdx; ev.side = 2; lanesSide2[laneIdx] = posPx + State.nodeWidth; placed = true; break;
+          }
+        } else {
+          if (!lanesSide2[laneIdx] || lanesSide2[laneIdx] < posPx - State.lanePadding) {
+            ev.lane = laneIdx; ev.side = 2; lanesSide2[laneIdx] = posPx + State.nodeWidth; placed = true; break;
+          }
+          if (!lanesSide1[laneIdx] || lanesSide1[laneIdx] < posPx - State.lanePadding) {
+            ev.lane = laneIdx; ev.side = 1; lanesSide1[laneIdx] = posPx + State.nodeWidth; placed = true; break;
+          }
+        }
+        laneIdx++;
       }
 
-      const el = document.createElement('div');
-      
-      let classes = ['node', `type-${ev.type || 'General'}`];
-      if (ev.fadeStart) classes.push('fade-start');
-      if (ev.fadeEnd) classes.push('fade-end');
-      if (ev.end) classes.push('is-period');
-      el.className = classes.join(' ');
-      
+      // Assign final coordinates
       if (State.layout === 'x') {
-        el.style.left = `${posPx}px`;
-        const stagger = (idx % 3) * 140; // Avoid overlap
-        el.style.top = `${stagger - 140}px`; 
+        ev.renderX = posPx;
+        ev.renderY = ev.side === 1 
+          ? -State.axisOffset - (ev.lane * (State.nodeHeight + State.lanePadding)) - State.nodeHeight
+          : State.axisOffset + (ev.lane * (State.nodeHeight + State.lanePadding));
+      } else {
+        ev.renderY = posPx;
+        ev.renderX = ev.side === 1 
+          ? -State.axisOffset - (ev.lane * (State.nodeWidth + State.lanePadding)) - State.nodeWidth
+          : State.axisOffset + (ev.lane * (State.nodeWidth + State.lanePadding));
+      }
+    });
+
+    return { minPos, maxPos };
+  },
+
+  renderTimeline() {
+    const container = document.getElementById('nodesContainer');
+    const svg = document.getElementById('timelineSvg');
+    
+    container.innerHTML = '';
+    svg.innerHTML = '';
+    
+    if (!State.events.length) return;
+
+    const bounds = this.calculateLayout();
+    
+    // Setup SVG Canvas Size
+    const svgPad = 5000; // Large padding for infinite feel
+    let svgWidth = 0, svgHeight = 0, svgOffsetX = 0, svgOffsetY = 0;
+
+    if (State.layout === 'x') {
+      svgWidth = (bounds.maxPos - bounds.minPos) + svgPad * 2;
+      svgHeight = 4000;
+      svgOffsetX = bounds.minPos - svgPad;
+      svgOffsetY = -2000;
+    } else {
+      svgWidth = 4000;
+      svgHeight = (bounds.maxPos - bounds.minPos) + svgPad * 2;
+      svgOffsetX = -2000;
+      svgOffsetY = bounds.minPos - svgPad;
+    }
+
+    svg.setAttribute('viewBox', `${svgOffsetX} ${svgOffsetY} ${svgWidth} ${svgHeight}`);
+    svg.style.width = `${svgWidth}px`;
+    svg.style.height = `${svgHeight}px`;
+    svg.style.transform = `translate(${svgOffsetX}px, ${svgOffsetY}px)`;
+
+    let svgContent = '';
+
+    // Draw Axis Line
+    if (State.layout === 'x') {
+      svgContent += `<line x1="${svgOffsetX}" y1="0" x2="${svgOffsetX + svgWidth}" y2="0" class="svg-axis" />`;
+    } else {
+      svgContent += `<line x1="0" y1="${svgOffsetY}" x2="0" y2="${svgOffsetY + svgHeight}" class="svg-axis" />`;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    State.events.forEach(ev => {
+      // Draw SVG Elements (Stems, Ticks, Durations)
+      const isX = State.layout === 'x';
+      const nodeCenter = isX ? ev.renderX + State.nodeWidth/2 : ev.renderY + State.nodeHeight/2;
+      
+      if (isX) {
+        // Tick
+        svgContent += `<line x1="${nodeCenter}" y1="-6" x2="${nodeCenter}" y2="6" class="svg-tick" />`;
+        // Stem
+        const stemY = ev.side === 1 ? ev.renderY + State.nodeHeight : ev.renderY;
+        svgContent += `<line id="stem_${ev.id}" x1="${nodeCenter}" y1="0" x2="${nodeCenter}" y2="${stemY}" class="svg-stem" />`;
+        // Date Text on Axis
+        svgContent += `<text x="${nodeCenter}" y="${ev.side === 1 ? 18 : -10}" text-anchor="middle" class="svg-text">${ev.start.substring(0,4)}</text>`;
         
-        // Render Period Length
+        // Duration Bar
         if (ev.end) {
-          if (State.spacingMode === 'temporal') {
-             const msEnd = Utils.parseDate(ev.end);
-             if(msEnd) {
-               const widthPx = Utils.timeToPixels(msEnd) - posPx;
-               el.style.width = `${Math.max(widthPx, 260)}px`;
-             }
-          } else {
-             el.style.width = `320px`; // Fixed larger width for periods in equidistant mode
+          const msEnd = Utils.parseDate(ev.end);
+          if (msEnd) {
+            const endPx = State.spacingMode === 'temporal' ? Utils.timeToPixels(msEnd) : ev.renderX + State.nodeSpacingEq * 0.8;
+            const width = Math.max(endPx - ev.renderX, 10);
+            svgContent += `<rect x="${ev.renderX}" y="-4" width="${width}" height="8" class="svg-duration" />`;
+            svgContent += `<line x1="${ev.renderX}" y1="0" x2="${ev.renderX + width}" y2="0" class="svg-duration-line" />`;
           }
         }
       } else {
-        el.style.top = `${posPx}px`;
-        const stagger = (idx % 2) * 280;
-        el.style.left = `${stagger + 160}px`;
+        // Tick
+        svgContent += `<line x1="-6" y1="${nodeCenter}" x2="6" y2="${nodeCenter}" class="svg-tick" />`;
+        // Stem
+        const stemX = ev.side === 1 ? ev.renderX + State.nodeWidth : ev.renderX;
+        svgContent += `<line id="stem_${ev.id}" x1="0" y1="${nodeCenter}" x2="${stemX}" y2="${nodeCenter}" class="svg-stem" />`;
+        // Date Text on Axis
+        svgContent += `<text x="${ev.side === 1 ? 12 : -12}" y="${nodeCenter + 4}" text-anchor="${ev.side === 1 ? 'start' : 'end'}" class="svg-text">${ev.start.substring(0,4)}</text>`;
         
+        // Duration Bar
         if (ev.end) {
-          if (State.spacingMode === 'temporal') {
-             const msEnd = Utils.parseDate(ev.end);
-             if(msEnd) {
-               const heightPx = Utils.timeToPixels(msEnd) - posPx;
-               el.style.height = `${Math.max(heightPx, 120)}px`;
-               el.style.minWidth = "220px";
-             }
-          } else {
-             el.style.minHeight = `150px`;
+          const msEnd = Utils.parseDate(ev.end);
+          if (msEnd) {
+            const endPx = State.spacingMode === 'temporal' ? Utils.timeToPixels(msEnd) : ev.renderY + State.nodeSpacingEq * 0.8;
+            const height = Math.max(endPx - ev.renderY, 10);
+            svgContent += `<rect x="-4" y="${ev.renderY}" width="8" height="${height}" class="svg-duration" />`;
+            svgContent += `<line x1="0" y1="${ev.renderY}" x2="0" y2="${ev.renderY + height}" class="svg-duration-line" />`;
           }
         }
       }
 
-      const dateStr = ev.end ? `${ev.start} &rarr; ${ev.end}` : ev.start;
-      const srcHtml = (ev.sources || []).map(s => `<div class="node-src"><a href="${s}" target="_blank">${s}</a></div>`).join('');
+      // Create DOM Node
+      const el = document.createElement('div');
+      el.className = `node type-${ev.type || 'General'}`;
+      el.style.left = `${ev.renderX}px`;
+      el.style.top = `${ev.renderY}px`;
+      
+      const dateStr = ev.end ? `${ev.start} → ${ev.end}` : ev.start;
+      const srcHtml = (ev.sources ||[]).map(s => `<div class="node-src"><a href="${s}" target="_blank">${s}</a></div>`).join('');
       
       el.innerHTML = `
         <div class="drag-tooltip"></div>
         <div class="node-header">
           <div class="node-date">${dateStr}</div>
+          <div class="node-type-badge">${ev.type || 'General'}</div>
         </div>
         <div class="node-title">${Utils.escape(ev.title)}</div>
         <div class="node-detail">
@@ -827,7 +990,8 @@ const chronos = {
       fragment.appendChild(el);
     });
 
-    layer.appendChild(fragment);
+    svg.innerHTML = svgContent;
+    container.appendChild(fragment);
   },
 
   toggleExpand(e, btn, descId) {
@@ -840,12 +1004,12 @@ const chronos = {
   renderTable() {
     const tbody = document.getElementById('tableBody');
     const html = State.events.map(ev => {
-      const dStr = ev.end ? `${ev.start} &rarr; ${ev.end}` : ev.start;
+      const dStr = ev.end ? `${ev.start} → ${ev.end}` : ev.start;
       return `<tr>
-        <td style="font-family:var(--font-mono); color:var(--accent); font-weight:600;">${dStr}</td>
-        <td><span style="font-size:10px; text-transform:uppercase; padding:2px 6px; background:var(--surface-elevated); border:1px solid var(--border); border-radius:4px; color:var(--type-${(ev.type||'general').toLowerCase()})">${ev.type}</span></td>
-        <td style="font-weight:600">${Utils.escape(ev.title)}</td>
-        <td style="color:var(--text-muted); font-size:11px;">${Utils.escape(ev.description)}</td>
+        <td style="font-family:var(--font-mono); color:var(--accent); font-weight:700; white-space:nowrap;">${dStr}</td>
+        <td><span style="font-size:10px; text-transform:uppercase; font-weight:800; padding:4px 8px; background:var(--surface-elevated); border:1px solid var(--border); border-radius:6px; color:var(--type-${(ev.type||'general').toLowerCase()})">${ev.type}</span></td>
+        <td style="font-weight:700; font-size:13px;">${Utils.escape(ev.title)}</td>
+        <td style="color:var(--text-muted); font-size:12px; line-height:1.5;">${Utils.escape(ev.description)}</td>
       </tr>`;
     }).join('');
     tbody.innerHTML = html;
